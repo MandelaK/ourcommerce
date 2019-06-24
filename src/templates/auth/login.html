@@ -1,5 +1,15 @@
-<form method="POST">
-  {% csrf_token %}
-  {{ form }}
-  <button type="submit" class="btn btn-default">Submit</button>
-</form>
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <form method="POST">
+          {% csrf_token %}
+          {{ form }}
+          <button type="submit" class="btn btn-default">Submit</button>
+          <p>Don't have an account? <a href="{% url 'core:register' %}">Register here</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
