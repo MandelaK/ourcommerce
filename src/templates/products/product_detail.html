@@ -1,1 +1,16 @@
-{{ object.title }} - - ${{ object.price }}
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>{{ object.title }}</h1>
+            <p>Going for ${{ object.price }}</p> <br/>
+            {% if object.image %}
+                <a href="{{ object.get_absolute_url }}">
+                        <img src="{{ object.image.url }}" class="card-img-top" alt="{{ object.title }} image">
+                </a>
+            {% endif %}
+            <p>{{ object.description|linebreaks }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
