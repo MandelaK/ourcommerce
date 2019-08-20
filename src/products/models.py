@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import pre_save
 from django.shortcuts import reverse
+from django.db.models import Q
 
 from products.utils import unique_slug_generator
 
@@ -9,10 +10,18 @@ class ProductQuerySet(models.query.QuerySet):
     """Implement custom queryset for Product model"""
 
     def featured(self):
-        return self.filter(featured=True)
+        return self.filter(active=True, featured=True)
 
     def active(self):
         return self.filter(active=True)
+
+    def search(self, query):
+        """Query set for searching through different fields"""
+        lookups = (Q(title__icontains=query) | Q(
+            description__icontains=query) | Q(price__icontains=query) | Q(
+                producttag__title__icontains=query
+        ))
+        return self.filter(lookups).distinct()
 
 
 class ProductManager(models.Manager):
@@ -27,6 +36,12 @@ class ProductManager(models.Manager):
     def all(self):
         """Only return active objects"""
         return self.get_queryset().active()
+
+    def search(self, query):
+        """Return the search results of a particular query"""
+        # lookups = Q(title__icontains=query) | Q(description__icontains=query)
+        # return self.get_queryset().active().filter(lookups).distinct()
+        return self.get_queryset().active().search(query)
 
 
 class Product(models.Model):

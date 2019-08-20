@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django_extensions',
 
     'products.apps.ProductsConfig',
+    'search.apps.SearchConfig',
+    'tags.apps.TagsConfig',
+
 ]
 
 MIDDLEWARE = [

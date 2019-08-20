@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include(('core.urls', 'core'), namespace='core')),
     path('auth/', include(('core.urls', 'core'), namespace='auth')),
     path('products/', include(('products.urls', 'products'), namespace='products')),
+    path('search/', include(('search.urls', 'search'), namespace='search')),
 ]
 
 # don't serve static files in production
