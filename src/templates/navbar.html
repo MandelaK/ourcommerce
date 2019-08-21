@@ -1,6 +1,8 @@
 {% url 'core:home' as home %}
 {% url 'products:featured_products' as featured_url %}
 {% url 'products:list_products' as product_list %}
+{% url 'core:logout' as logout %}
+{% url 'cart:cart' as cart %}
 
 
 <div class="container">
@@ -21,6 +23,9 @@
             <li class="nav-item {% if request.path == featured_url %} active {% endif %}">
               <a class="nav-link" href="{{ featured_url }}">Featured Products</a>
             </li>
+            <li class="nav-item {% if request.path == cart %} active {% endif %}">
+              <a class="nav-link" href="{{ cart }}">{{ request.session.cart_items }} <i class="fas fa-shopping-cart"></i></a>
+            </li>
             {% if request.user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,7 +35,7 @@
                         <a class="dropdown-item" href="#">Profile</a>
                         <a class="dropdown-item" href="#">Purchase History</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        <a class="dropdown-item" href="{{ logout }}">Logout</a>
                 </div>
                 </li>
                 {% else %}
