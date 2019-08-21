@@ -3,7 +3,7 @@ from django.db.models.signals import pre_save
 from django.shortcuts import reverse
 from django.db.models import Q
 
-from products.utils import unique_slug_generator
+from ecommerce.utils import unique_slug_generator
 
 
 class ProductQuerySet(models.query.QuerySet):
