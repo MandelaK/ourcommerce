@@ -57,6 +57,11 @@ def login_page(request):
 User = get_user_model()
 
 
+def logout(request):
+    request.session.flush()
+    return redirect('/')
+
+
 def register_page(request):
     form = RegisterForm(request.POST or None)
     context = {

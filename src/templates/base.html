@@ -8,7 +8,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CDN -->
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -16,11 +16,15 @@
       crossorigin="anonymous"
     />
 
+    <!-- FontAwesome script -->
+    <script src="https://kit.fontawesome.com/f15859b8b4.js"></script>
     <title>{{ title }}</title>
   </head>
   <body>
     {% include 'navbar.html' with brand_name='ourCommerce' %}
+      <div class="container">
     {% block content %} {% endblock %}
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 
+from cart.models import Cart
 from products.models import Product
 
 
@@ -16,6 +17,13 @@ class ProductListView(ListView):
 
 class ProductDetailView(DetailView):
     queryset = Product.objects.all()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProductDetailView, self).get_context_data(
+            *args, **kwargs)
+        cart_obj, new_obj = Cart.objects.new_or_get(self.request)
+        context['cart'] = cart_obj
+        return context
 
 
 class ProductFeaturedDetailView(DetailView):

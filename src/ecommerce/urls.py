@@ -18,11 +18,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from cart.views import cart_home
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(('core.urls', 'core'), namespace='core')),
     path('auth/', include(('core.urls', 'core'), namespace='auth')),
+    path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('search/', include(('search.urls', 'search'), namespace='search')),
 ]
