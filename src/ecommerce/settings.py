@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'tags.apps.TagsConfig',
     'cart.apps.CartConfig',
     'orders.apps.OrdersConfig',
+    'accounts.apps.AccountsConfig',
 
 ]
 
@@ -138,3 +139,5 @@ STATIC_ROOT = os.path.join(os.path.dirname(
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(
     BASE_DIR), "static_cdn", "media_root")
+
+LOGOUT_REDIRECT_URL = '/auth/login/'

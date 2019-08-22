@@ -1,39 +1,15 @@
 from django.contrib.auth import authenticate, login, get_user_model
 from django.shortcuts import render, redirect
-from core.forms import ContactForm, LoginForm, RegisterForm
+from django.utils.http import is_safe_url
 
-
-def home_page(request):
-    context = {
-        "title": "Welcome to OurCommerce",
-        "content": "Are you ready to trade??"
-    }
-    return render(request, 'home_page.html', context)
-
-
-def contact_page(request):
-    contact_form = ContactForm(request.POST or None)
-
-    context = {"title": "Contact Us",
-               "content": "Get in touch with us!",
-               "form": contact_form
-               }
-
-    if contact_form.is_valid():
-        print(contact_form.cleaned_data)
-
-    return render(request, 'contact_page.html', context)
-
-
-def about_page(request):
-    context = {"title": "About Us",
-               "content": "Here's everything we are about..."}
-    return render(request, 'about_page.html', context)
+from accounts.forms import LoginForm, RegisterForm
 
 
 def login_page(request):
     form = LoginForm(request.POST or None)
-    print(request.user.is_authenticated)
+    next_ = request.GET.get('next')
+    next_post = request.POST.get('next')
+    redirect_path = next_ or next_post or None
     context = {
         "form": form
     }
@@ -41,17 +17,19 @@ def login_page(request):
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
         user = authenticate(request, username=username, password=password)
-        print(request.user.is_authenticated)
         if user is not None:
             login(request, user)
             # we clear the form
             context['form'] = LoginForm()
+            if is_safe_url(redirect_path, request.get_host()):
+                print(f"redirectin to {redirect_path}")
+                return redirect(redirect_path)
             return redirect('/')
 
         else:
-            print("Error")
+            pass
 
-    return render(request, 'auth/login.html', context)
+    return render(request, 'accounts/login.html', context)
 
 
 User = get_user_model()
@@ -68,7 +46,6 @@ def register_page(request):
         "form": form
     }
     if form.is_valid():
-        print(form.cleaned_data)
         username = form.cleaned_data.get('username')
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
@@ -76,4 +53,4 @@ def register_page(request):
             username=username, email=email, password=password)
         context['form'] = RegisterForm()
 
-    return render(request, 'auth/register.html', context)
+    return render(request, 'accounts/register.html', context)
