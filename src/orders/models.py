@@ -2,11 +2,36 @@ import math
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 
+from billings.models import BillingProfile
 from cart.models import Cart
 from ecommerce.utils import unique_order_id_generator
 
 
 SHIPPING_DEFAULT = 100.0
+
+
+class OrderManager(models.Manager):
+    """
+    Model manager for the Order class
+    """
+
+    def new_or_get(self, billing_profile, cart_obj):
+        """
+        Return the existing order or create a new one if it is not found
+        """
+        qs = self.get_queryset().filter(
+            cart=cart_obj, billing_profile=billing_profile, active=True)
+        if qs.count() == 1:
+            created = False
+            obj = qs.first()
+        else:
+            # if there are any old active orders for this billing profile,
+            # we make them inactive and create a new order
+            obj = self.model.objects.create(
+                billing_profile=billing_profile, cart=cart_obj)
+            created = True
+
+        return obj, created
 
 
 class Order(models.Model):
@@ -22,15 +47,20 @@ class Order(models.Model):
     )
 
     order_id = models.CharField(max_length=120, blank=True, unique=True)
-    # billing_profile =
+    billing_profile = models.ForeignKey(
+        BillingProfile, on_delete=models.CASCADE, null=True, blank=True)
     # shipping_address =
     # billing_address =
+    # TODO check whether cart should be a OneToOne field instead
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=50, default='created', choices=ORDER_STATUS_CHOICES)
     shipping_total = models.DecimalField(
         default=SHIPPING_DEFAULT, max_digits=100, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
+    active = models.BooleanField(default=True)
+
+    objects = OrderManager()
 
     def __str__(self):
         return str(self.order_id)
@@ -54,6 +84,13 @@ def pre_save_order_receiver(sender, instance, *args, **kwargs):
     """
     if not instance.order_id:
         instance.order_id = unique_order_id_generator(instance)
+
+    # if old orders exist for this cart, we deactivate them.
+    # TODO why are we excluding the billing profile?
+    old_orders = Order.objects.filter(cart=instance.cart).exclude(
+        billing_profile=instance.billing_profile)
+    if old_orders.exists():
+        old_orders.update(active=False)
 
 
 pre_save.connect(pre_save_order_receiver, sender=Order)

@@ -1,21 +1,57 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<table class="table">
-<h1>Checkout</h1>
-  <tbody>
-<tr>
-    <td><a href='{% url "cart:cart"  %}'>Cart Total</a></td>
-    <td><strong>{{ object.cart.total }}<strong></td>
-</tr>
-<tr>
-    <td>Shipping Total</td>
-    <td><strong>{{ object.shipping_total }}<strong></td>
-</tr>
-<tr class="table-info">
-    <td>Total</strong></td>
-    <td><strong>{{ object.total }}<strong></td>
-</tr>
-  </tbody>
-</table>
+{{ object.order_id }} -- {{ object.cart }}
+
+{% if not billing_profile %}
+  <div class="row text-center">
+    <div class="col-12 col-md-6">
+      <p class="lead">Login</p>
+      {% include 'accounts/snippets/form.html' with form=login_form next_url=request.build_absolute_uri %}
+    </div>
+    <div class="col-12 col-md-6">
+      <p class="lead">Continue as Guest</p>
+      {% url 'accounts:register_guest' as guest_register %}
+      {% include 'accounts/snippets/form.html' with form=guest_form next_url=request.build_absolute_uri action_url=guest_register %}
+    </div>
+  </div>
+{% else %}
+  {% if not object.shipping_address %}
+  <div class="row">
+    <div class="col-md-6 mx-auto col-10">
+    <p class="lead">Shipping Address</p>
+    <hr/>
+      {% url "checkout_address_create" as "checkout_address" %}
+      {% include 'addresses/snippets/form.html' with form=address_form next_url=request.build_absolute_uri action_url="/address/" address_type="shipping"%}
+    </div>
+  </div>
+  {% elif not object.billing_address %}
+  <div class="row">
+    <div class="col-md-6 mx-auto col-10">
+    <p class="lead">Billing Address</p>
+    <hr/>
+      {% url "checkout_address_create" as "checkout_address" %}
+      {% include 'addresses/snippets/form.html' with form=address_form next_url=request.build_absolute_uri action_url="/address/" address_type="billing"%}
+    </div>
+  </div>
+  {% else %}
+    <table class="table">
+    <h1>Checkout</h1>
+      <tbody>
+    <tr>
+        <td><a href='{% url "cart:cart"  %}'>Cart Total</a></td>
+        <td><strong>{{ object.cart.total }}<strong></td>
+    </tr>
+    <tr>
+        <td>Shipping Total</td>
+        <td><strong>{{ object.shipping_total }}<strong></td>
+    </tr>
+    <tr class="table-info">
+        <td>Total</strong></td>
+        <td><strong>{{ object.total }}<strong></td>
+    </tr>
+      </tbody>
+    </table>
+  {% endif %}
+{% endif %}
 {% endblock %}

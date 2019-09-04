@@ -5,7 +5,7 @@ from .forms import ContactForm
 def home_page(request):
     context = {
         "title": "Welcome to OurCommerce",
-        "content": "Are you ready to trade??"
+        "content": "OurCommerce"
     }
     return render(request, 'home_page.html', context)
 
