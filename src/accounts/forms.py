@@ -16,6 +16,14 @@ class LoginForm(forms.Form):
     )
 
 
+class GuestForm(forms.Form):
+    """Define the form for guest users"""
+    email = forms.EmailField(
+        label='Email', widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Enter your email..."})
+    )
+
+
 class RegisterForm(forms.Form):
     """Define the registration form"""
 
