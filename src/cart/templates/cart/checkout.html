@@ -36,7 +36,7 @@
   </div>
   {% else %}
     <table class="table">
-    <h1>Checkout</h1>
+    <h1>Finalize Checkout</h1>
       <tbody>
     <tr>
         <td><a href='{% url "cart:cart"  %}'>Cart Total</a></td>
@@ -52,6 +52,9 @@
     </tr>
       </tbody>
     </table>
+    <form class="form" method="POST" action=""> {% csrf_token %}
+    <button type="submit" class="btn btn-success">Checkout</button>
+    </form>
   {% endif %}
 {% endif %}
 {% endblock %}

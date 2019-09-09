@@ -2,6 +2,7 @@ import math
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 
+from addresses.models import Address
 from billings.models import BillingProfile
 from cart.models import Cart
 from ecommerce.utils import unique_order_id_generator
@@ -20,7 +21,11 @@ class OrderManager(models.Manager):
         Return the existing order or create a new one if it is not found
         """
         qs = self.get_queryset().filter(
-            cart=cart_obj, billing_profile=billing_profile, active=True)
+            cart=cart_obj,
+            billing_profile=billing_profile,
+            active=True,
+            status="created"  # exclude paid orders
+        )
         if qs.count() == 1:
             created = False
             obj = qs.first()
@@ -49,8 +54,12 @@ class Order(models.Model):
     order_id = models.CharField(max_length=120, blank=True, unique=True)
     billing_profile = models.ForeignKey(
         BillingProfile, on_delete=models.CASCADE, null=True, blank=True)
-    # shipping_address =
-    # billing_address =
+    shipping_address = models.ForeignKey(
+        Address, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='shipping_address')
+    billing_address = models.ForeignKey(
+        Address, on_delete=models.CASCADE, null=True, blank=True,
+        related_name="billing_address")
     # TODO check whether cart should be a OneToOne field instead
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     status = models.CharField(
@@ -76,6 +85,23 @@ class Order(models.Model):
         self.total = formated_total
         self.save()
         return self.total
+
+    def check_order(self):
+        """
+        Check that the order is ready to be finished
+        """
+        if self.billing_profile and self.billing_address and self.shipping_address and self.total > 0:
+            return True
+        return False
+
+    def mark_done(self):
+        """
+        Set an order to be `done`
+        """
+        if self.check_order():
+            self.status = "paid"
+            self.save()
+            return self.status
 
 
 def pre_save_order_receiver(sender, instance, *args, **kwargs):

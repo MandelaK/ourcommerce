@@ -7,6 +7,7 @@ from billings.models import BillingProfile
 from products.models import Product
 from orders.models import Order
 from addresses.forms import AddressForm
+from addresses.models import Address
 
 
 def cart_home(request):
@@ -47,9 +48,28 @@ def checkout(request):
     address_form = AddressForm()
     billing_profile, created = BillingProfile.objects.new_or_get(request)
 
+    billing_address_id = request.session.get('billing_address_id', None)
+    shipping_address_id = request.session.get('shipping_address_id', None)
     if billing_profile is not None:
         order_obj, order_created = Order.objects.new_or_get(
             billing_profile, cart_obj)
+        if shipping_address_id:
+            order_obj.shipping_address = Address.objects.get(
+                pk=shipping_address_id)
+            order_obj.save()
+            del request.session['shipping_address_id']
+        if billing_address_id:
+            order_obj.billing_address = Address.objects.get(
+                pk=billing_address_id)
+            order_obj.save()
+            del request.session["billing_address_id"]
+    if request.method == "POST":
+        is_done = order_obj.check_order()
+        if is_done:
+            order_obj.mark_done()
+            request.session["cart_items"] = 0
+            del request.session["cart_id"]
+            return redirect("cart/success")
     context = {
         'object': order_obj,
         'billing_profile': billing_profile,
