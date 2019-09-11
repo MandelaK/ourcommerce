@@ -20,7 +20,6 @@ from django.conf.urls.static import static
 
 from cart.views import cart_home
 from .views import home_page, contact_page, about_page
-from addresses.views import checkout_address_create_view
 
 
 urlpatterns = [
@@ -29,8 +28,8 @@ urlpatterns = [
     path('', home_page, name='home'),
     path('about/', about_page, name='about'),
     path('contact/', contact_page, name='contact'),
-    path('address/', checkout_address_create_view,
-         name='checkout_address_create'),
+    path('address/', include(('addresses.urls', 'addresses'), namespace='addresses'),
+         name='addresses'),
     path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('search/', include(('search.urls', 'search'), namespace='search')),
