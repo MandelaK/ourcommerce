@@ -81,7 +81,7 @@ def pre_save_cart_receiver(sender, instance, *args, **kwargs):
     Fees
     """
     if instance.subtotal > 0:
-        instance.total = instance.subtotal  # + other fees, eg shipping etc
+        instance.total = instance.subtotal
     else:
         instance.total = 0.00
 

@@ -19,12 +19,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from cart.views import cart_home
+from .views import home_page, contact_page, about_page
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(('core.urls', 'core'), namespace='core')),
-    path('auth/', include(('core.urls', 'core'), namespace='auth')),
+    path('auth/', include(('accounts.urls', 'accounts'), namespace='accounts')),
+    path('', home_page, name='home'),
+    path('about/', about_page, name='about'),
+    path('contact/', contact_page, name='contact'),
+    path('address/', include(('addresses.urls', 'addresses'), namespace='addresses'),
+         name='addresses'),
     path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('search/', include(('search.urls', 'search'), namespace='search')),
