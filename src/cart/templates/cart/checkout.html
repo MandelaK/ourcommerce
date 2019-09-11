@@ -46,19 +46,31 @@
     </div>
   </div>
   {% else %}
-    <table class="table">
     <h1>Finalize Checkout</h1>
+    <p>Shipping Address: {{ object.shipping_address.get_address }}</p>
+    <p>Billing Address: {{ object.shipping_address.get_address }}</p>
+    <table class="table">
       <tbody>
+    {% for product in object.cart.products.all %}
+      <tr>
+        <td>
+          <a href="{{ product.get_absolute_url }}" style="text-decoration: none; color:inherit;">{{ product.title }}</a>
+        </td>
+        <td>
+          {{ product.price }}
+        </td>
+      </tr>
+    {% endfor %}
     <tr>
         <td><a href='{% url "cart:cart"  %}'>Cart Total</a></td>
         <td><strong>{{ object.cart.total }}<strong></td>
     </tr>
     <tr>
-        <td>Shipping Total</td>
+        <td><strong>Shipping Total</strong></td>
         <td><strong>{{ object.shipping_total }}<strong></td>
     </tr>
     <tr class="table-info">
-        <td>Total</strong></td>
+        <td><strong>Total</strong></td>
         <td><strong>{{ object.total }}<strong></td>
     </tr>
       </tbody>

@@ -73,7 +73,7 @@ def checkout(request):
             order_obj.mark_done()
             request.session["cart_items"] = 0
             del request.session["cart_id"]
-            return redirect("cart/success")
+            return redirect("cart:done")
     context = {
         'object': order_obj,
         'billing_profile': billing_profile,
@@ -83,3 +83,14 @@ def checkout(request):
         'address_qs': address_qs
     }
     return render(request, "cart/checkout.html", context=context)
+
+
+def checkout_done_view(request):
+    """
+    This view handles logic related to completing the checkout process
+    """
+
+    return render(request, "cart/checkout-done.html", {})
+
+
+# TODO: Allow users to change addresses during checkout

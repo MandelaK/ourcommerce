@@ -25,3 +25,16 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.address_type.title()} Address for {self.billing_profile}"
+
+    def get_address(self):
+        """
+        Return the address in an unambiguous human-readable format
+        """
+
+        return "{}\n{}\n{},\n{},\n{}".format(
+            self.address_line_1,
+            self.city,
+            self.state,
+            self.postal_code,
+            self.country
+        )
