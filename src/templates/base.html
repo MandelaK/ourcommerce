@@ -52,6 +52,10 @@
               } else {
                 $submitSpan.html('<button class="btn btn-success">Add to cart</button>')
               }
+              // update the count of items on the navbar
+              var $cartNavbarCount = $('.navbar-cart-count')
+              $cartNavbarCount.text(data.cart_item_count)
+
             },
             error: function(errorData){
               console.log(errorData);

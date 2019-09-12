@@ -34,10 +34,13 @@ def cart_update(request):
         else:
             cart_obj.products.add(product_obj)
             product_added = True
-        request.session['cart_items'] = cart_obj.products.count()
+        cart_item_count = cart_obj.products.count()
+        request.session['cart_items'] = cart_item_count
         if request.is_ajax:
             json_data = {
                 "added": product_added,
+                # we send back the cart item count too
+                "cart_item_count": cart_item_count
             }
             return JsonResponse(json_data)
     return redirect("cart:cart")
