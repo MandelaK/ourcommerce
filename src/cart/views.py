@@ -24,6 +24,8 @@ def cart_update(request):
     View for updating the cart
     """
     product_id = request.POST.get('product_id')
+    if request.is_ajax:
+        print("Ajax request")
     if product_id is not None:
         product_obj = Product.objects.get(id=product_id)
         cart_obj, new_obj = Cart.objects.new_or_get(request)
