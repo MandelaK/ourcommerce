@@ -45,7 +45,13 @@
             method: $httpMethod,
             data: $formData,
             success: function(data){
-              console.log(data);
+              var $submitSpan = $thisForm.find('.product-submit-span')
+              // change the buttons depending on whether the product is in the cart or not
+              if (data.added){
+                $submitSpan.html('In cart <button type="submit" class="btn btn-link">Remove?</button>')
+              } else {
+                $submitSpan.html('<button class="btn btn-success">Add to cart</button>')
+              }
             },
             error: function(errorData){
               console.log(errorData);
