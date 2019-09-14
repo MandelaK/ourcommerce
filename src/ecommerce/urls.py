@@ -18,8 +18,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from cart.views import cart_home
 from .views import home_page, contact_page, about_page
+from cart.views import cart_detail_api_view
 
 
 urlpatterns = [
@@ -33,6 +33,7 @@ urlpatterns = [
     path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('search/', include(('search.urls', 'search'), namespace='search')),
+    path('api/cart/', cart_detail_api_view, name='api-cart')
 ]
 
 # don't serve static files in production

@@ -22,26 +22,109 @@
   </head>
   <body>
     {% include 'navbar.html' with brand_name='ourCommerce' %}
-      <div class="container">
-    {% block content %} {% endblock %}
+    <div class="container">
+      {% block content %} {% endblock %}
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"
-    ></script>
+    <!-- Load scripts -->
+    {% include 'js.html' %}
+
+    <!-- Jquery Scripts -->
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var $productForm = $('.form-product-ajax')
+        // function called whenever the form is submitted
+        console.log("JQuery is ready!!!")
+        $productForm.submit(function(event){
+          event.preventDefault()
+          console.log("Submitting form data")
+          var $thisForm = $(this);
+          var $actionUrl = $thisForm.attr('data-endpoint');
+          var $httpMethod = $thisForm.attr('method');
+          var $formData = $thisForm.serialize();
+
+          $.ajax({
+            url: $actionUrl,
+            method: $httpMethod,
+            data: $formData,
+            success: function(data){
+              var $submitSpan = $thisForm.find('.product-submit-span')
+              // change the buttons depending on whether the product is in the cart or not
+              if (data.added){
+                $submitSpan.html('In cart <button type="submit" class="btn btn-link">Remove?</button>')
+              } else {
+                $submitSpan.html('<button class="btn btn-success">Add to cart</button>')
+              }
+              // update the count of items on the navbar
+              var $cartNavbarCount = $('.navbar-cart-count')
+              $cartNavbarCount.text(data.cart_item_count)
+
+              var $currentPath = window.location.href
+
+              console.log($currentPath)
+
+              if ($currentPath.indexOf("cart") != -1){
+                // we only call this function if we are on the `cart` page
+                refreshCart()
+              }
+            },
+            error: function(errorData){
+              console.log("error")
+              console.log(errorData);
+            }
+          })
+        })
+        function refreshCart(){
+          console.log("Refreshing the cart")
+          // We refresh the cart to keep track of any changes and fetch new data
+          var $cartTable = $(".product-cart-table")
+          var $cartBody = $cartTable.find(".product-cart-body")
+          var $productRow = $cartBody.find(".cart-product")
+
+          var $refreshCartUrl = '/api/cart/';
+          var $refreshCartMethod = "GET";
+          var $data = {};
+
+          $.ajax({
+            url: $refreshCartUrl,
+            method: $refreshCartMethod,
+            data: $data,
+            success: function(data){
+              console.log("Cart refresh successful")
+              var $hiddenCartItemRemoveForm = $('.cart-item-remove-form')
+              if (data.products.length > 0){
+                $productRow.html(" ")
+
+                i = data.products.length;
+                $.each(data.products, function(index, value){
+                  var $newCartItemRemoveForm = $hiddenCartItemRemoveForm.clone();
+                  $newCartItemRemoveForm.css("display", "block")
+                  // add the product id to the form value
+                  $newCartItemRemoveForm.find(".cart-item-product-id").val(value.id)
+                  console.log($newCartItemRemoveForm)
+                  // $cartBody.prepend("<tr><th scope=\"row\">" + i + "<td><a href='" +
+                  // value.url + "'>" + value.name + "</a>" + $newCartItemRemoveForm.html() + "<td>" +
+                  // value.price + "<td>" + value.description + "</td></td></td></th></tr>");
+                  $cartBody.prepend("<tr class=\"cart-product\"><th scope=\"row\">" + i + "</th><td><a href='" + value.url + "'>" + value.name + "</a>" + $newCartItemRemoveForm.html() + "</td><td>" + value.price + "</td><td>" + value.description + " PREPENDED!!! " + "</td></tr>");
+                  i--
+                })
+                $cartBody.find(".cart-subtotal").text(data.subtotal)
+                $cartBody.find(".cart-total").text(data.total)
+              } else {
+                window.location.reload()
+              }
+            },
+            error: function(errorData){
+              console.log("error")
+              console.log(errorData)
+            }
+          })
+
+        }
+      })
+    </script>
   </body>
 </html>
+
+<!--TODO: Fix the cart rendering errors in this branch. I will continue this course using
+React + TypeScript + Redux -->
