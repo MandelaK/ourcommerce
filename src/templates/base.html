@@ -22,8 +22,8 @@
   </head>
   <body>
     {% include 'navbar.html' with brand_name='ourCommerce' %}
-      <div class="container">
-    {% block content %} {% endblock %}
+    <div class="container">
+      {% block content %} {% endblock %}
     </div>
 
     <!-- Load scripts -->
@@ -33,10 +33,13 @@
     <script type="text/javascript">
       $(document).ready(function(){
         var $productForm = $('.form-product-ajax')
+        // function called whenever the form is submitted
+        console.log("JQuery is ready!!!")
         $productForm.submit(function(event){
           event.preventDefault()
+          console.log("Submitting form data")
           var $thisForm = $(this);
-          var $actionUrl = $thisForm.attr('action');
+          var $actionUrl = $thisForm.attr('data-endpoint');
           var $httpMethod = $thisForm.attr('method');
           var $formData = $thisForm.serialize();
 
@@ -56,13 +59,72 @@
               var $cartNavbarCount = $('.navbar-cart-count')
               $cartNavbarCount.text(data.cart_item_count)
 
+              var $currentPath = window.location.href
+
+              console.log($currentPath)
+
+              if ($currentPath.indexOf("cart") != -1){
+                // we only call this function if we are on the `cart` page
+                refreshCart()
+              }
             },
             error: function(errorData){
+              console.log("error")
               console.log(errorData);
             }
           })
         })
+        function refreshCart(){
+          console.log("Refreshing the cart")
+          // We refresh the cart to keep track of any changes and fetch new data
+          var $cartTable = $(".product-cart-table")
+          var $cartBody = $cartTable.find(".product-cart-body")
+          var $productRow = $cartBody.find(".cart-product")
+
+          var $refreshCartUrl = '/api/cart/';
+          var $refreshCartMethod = "GET";
+          var $data = {};
+
+          $.ajax({
+            url: $refreshCartUrl,
+            method: $refreshCartMethod,
+            data: $data,
+            success: function(data){
+              console.log("Cart refresh successful")
+              var $hiddenCartItemRemoveForm = $('.cart-item-remove-form')
+              if (data.products.length > 0){
+                $productRow.html(" ")
+
+                i = data.products.length;
+                $.each(data.products, function(index, value){
+                  var $newCartItemRemoveForm = $hiddenCartItemRemoveForm.clone();
+                  $newCartItemRemoveForm.css("display", "block")
+                  // add the product id to the form value
+                  $newCartItemRemoveForm.find(".cart-item-product-id").val(value.id)
+                  console.log($newCartItemRemoveForm)
+                  // $cartBody.prepend("<tr><th scope=\"row\">" + i + "<td><a href='" +
+                  // value.url + "'>" + value.name + "</a>" + $newCartItemRemoveForm.html() + "<td>" +
+                  // value.price + "<td>" + value.description + "</td></td></td></th></tr>");
+                  $cartBody.prepend("<tr class=\"cart-product\"><th scope=\"row\">" + i + "</th><td><a href='" + value.url + "'>" + value.name + "</a>" + $newCartItemRemoveForm.html() + "</td><td>" + value.price + "</td><td>" + value.description + " PREPENDED!!! " + "</td></tr>");
+                  i--
+                })
+                $cartBody.find(".cart-subtotal").text(data.subtotal)
+                $cartBody.find(".cart-total").text(data.total)
+              } else {
+                window.location.reload()
+              }
+            },
+            error: function(errorData){
+              console.log("error")
+              console.log(errorData)
+            }
+          })
+
+        }
       })
     </script>
   </body>
 </html>
+
+<!--TODO: Fix the cart rendering errors in this branch. I will continue this course using
+React + TypeScript + Redux -->

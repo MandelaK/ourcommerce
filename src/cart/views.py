@@ -11,6 +11,29 @@ from addresses.forms import AddressForm
 from addresses.models import Address
 
 
+def cart_detail_api_view(request):
+    """
+    API view for the cart view
+    """
+
+    cart_obj, new_obj = Cart.objects.new_or_get(request)
+    products = [
+        {
+            "id": x.id,
+            "name": x.title,
+            "price": x.price,
+            "description": x.description,
+            "url": x.get_absolute_url()
+        } for x in cart_obj.products.all()
+    ]
+    data = {
+        "products": products,
+        "subtotal": cart_obj.subtotal,
+        "total": cart_obj.total
+    }
+    return JsonResponse(data)
+
+
 def cart_home(request):
     """
     Endpoint for retreiving and/or creating the
