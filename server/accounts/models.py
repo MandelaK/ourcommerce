@@ -52,4 +52,4 @@ class CustomUser(AbstractBaseUser):
     USERNAME_FIELD = 'username'
     EMAIL_FIELD = 'email'
 
-    activeObjects = UserManager()
+    objects = UserManager()
