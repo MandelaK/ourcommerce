@@ -33,6 +33,8 @@ urlpatterns = [
     path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('search/', include(('search.urls', 'search'), namespace='search')),
+    path('api/v1/auth/', include(('api.accounts.urls',
+                                  'api-auth')))
 ]
 
 # don't serve static files in production
