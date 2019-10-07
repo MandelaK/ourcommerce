@@ -6,6 +6,9 @@ from .forms import LoginForm, RegisterForm, GuestForm
 from .models import GuestEmail
 
 
+User = get_user_model()
+
+
 def login_page(request):
     """
     Handle logic for the login view
@@ -62,15 +65,18 @@ def guest_register_page(request):
     return render(request, 'auth/register/', context)
 
 
-User = get_user_model()
-
-
 def logout(request):
+    """
+    Logout users using session authentication
+    """
     request.session.flush()
     return redirect('/')
 
 
 def register_page(request):
+    """
+    Handles logic of user registration from from non-API views.
+    """
     form = RegisterForm(request.POST or None)
     context = {
         "form": form
@@ -79,7 +85,7 @@ def register_page(request):
         username = form.cleaned_data.get('username')
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
-        new_user = User.objects.create_user(
+        User.objects.get_or_create(
             username=username, email=email, password=password)
         context['form'] = RegisterForm()
 
