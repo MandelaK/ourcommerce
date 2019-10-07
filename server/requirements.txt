@@ -1,4 +1,7 @@
+autopep8==1.4.4
 Django==2.2.2
 django-extensions==2.1.9
+djangorestframework==3.10.3
 ipython==7.5.0
 Pillow==6.0.0
+PyJWT==1.7.1
