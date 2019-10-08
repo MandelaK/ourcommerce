@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
 
+User = get_user_model()
+
+
 class RegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer class that handles the serialization of user
@@ -50,7 +53,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         email, password, username = validated_data.get(
             'email'), validated_data.get('password'), validated_data.get('username')
         try:
-            user, created = settings.AUTH_USER_MODEL.objects.get_or_create(
+            user, created = User.objects.get_or_create(
                 email=email, username=username, password=password)
 
             if not created:
