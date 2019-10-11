@@ -1,0 +1,21 @@
+[run]
+branch = True
+omit = */tests/*,
+ */migrations/*,
+ */urls.py,
+ */venv/*,
+ */settings.py,
+ */wsgi.py,
+ */apps.py,
+ manage.py,
+ fabfile.py,
+ load_fixtures.py,
+ */.tox/*
+
+[report]
+show_missing=True
+ignore_errors = True
+
+
+[html]
+directory = coverage_html_report
