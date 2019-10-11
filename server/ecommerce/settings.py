@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'rest_framework',
+    'django_nose',
 
     'api',
     'products.apps.ProductsConfig',
@@ -92,10 +93,10 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME', 'postgres'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT', '5432'),
         'TEST': {
             'NAME': 'test_ourcommerce'
@@ -159,3 +160,5 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'api.accounts.backends.JWTAuthentication',),
 }
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
