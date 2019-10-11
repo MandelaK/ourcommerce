@@ -14,3 +14,6 @@ script:
 
 services:
   - postgresql
+
+after_success:
+  - coveralls
