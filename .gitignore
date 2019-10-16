@@ -17,3 +17,5 @@ coverage_html_report/
 htmlcov/
 
 static_cdn/
+
+geckodriver.log

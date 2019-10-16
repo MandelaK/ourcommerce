@@ -25,20 +25,16 @@ class UserManager(BaseUserManager):
         Get or create a new user instance. If multiple users instances are found,
         we return the first instance
         """
-        try:
-            password = kwargs.get('password')
-            if password:
-                kwargs.pop('password')
-            user, created = super().get_or_create(**kwargs)
-            if created:
-                user.set_password(password)
-                user.save()
-                return user, created
+
+        password = kwargs.get('password')
+        if password:
+            kwargs.pop('password')
+        user, created = super().get_or_create(**kwargs)
+        if created:
+            user.set_password(password)
+            user.save()
             return user, created
-        except self.model.MultipleObjectsReturned:
-            queryset = self.model.objects.filter(**kwargs)
-            # TODO: Find solution to what happens to duplicate accounts already saved in DB
-            return queryset.first(), False
+        return user, created
 
 
 class CustomUser(AbstractBaseUser):
@@ -49,7 +45,13 @@ class CustomUser(AbstractBaseUser):
     email = models.EmailField(unique=True, max_length=255)
     username = models.CharField(unique=True, max_length=255)
 
-    USERNAME_FIELD = 'username'
-    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'email'
 
     objects = UserManager()
+
+    def __str__(self):
+        """
+        Return the string representation of CustomUser
+        """
+
+        return self.get_username()

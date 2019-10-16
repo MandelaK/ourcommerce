@@ -9,4 +9,5 @@ Faker==2.0.2
 ipython==7.5.0
 Pillow==6.0.0
 PyJWT==1.7.1
+selenium==3.141.0
 tox==3.14.0
