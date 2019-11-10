@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.utils.http import is_safe_url
 
 from .forms import LoginForm, RegisterForm, GuestForm
@@ -20,10 +20,11 @@ def login_page(request):
     context = {
         "form": form
     }
+
     if form.is_valid():
-        username = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
             # delete guest email id if users log in
@@ -36,9 +37,8 @@ def login_page(request):
             if is_safe_url(redirect_path, request.get_host()):
                 return redirect(redirect_path)
             return redirect('/')
-
         else:
-            pass
+            context['errors'] = "Incorrect credentials. Try again"
 
     return render(request, 'accounts/login.html', context)
 
@@ -60,17 +60,9 @@ def guest_register_page(request):
         request.session['guest_email_id'] = new_guest_email.pk
         if is_safe_url(redirect_path, request.get_host()):
             return redirect(redirect_path)
-        return redirect('auth/register/')
+        return redirect('accounts/register.html')
 
-    return render(request, 'auth/register/', context)
-
-
-def logout(request):
-    """
-    Logout users using session authentication
-    """
-    request.session.flush()
-    return redirect('/')
+    return render(request, 'accounts/register.html', context)
 
 
 def register_page(request):
@@ -88,5 +80,6 @@ def register_page(request):
         User.objects.get_or_create(
             username=username, email=email, password=password)
         context['form'] = RegisterForm()
+        return redirect(reverse('accounts:login'))
 
     return render(request, 'accounts/register.html', context)

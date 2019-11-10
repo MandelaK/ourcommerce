@@ -1,6 +1,5 @@
 from rest_framework import serializers, exceptions
 from django.contrib.auth import get_user_model, password_validation
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
