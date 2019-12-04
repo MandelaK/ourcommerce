@@ -1,9 +1,10 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework.test import APITestCase, APIRequestFactory
 
 from tests.factories.accounts_factory import GuestEmailFactory, UserFactory
+from tests.factories.products_factory import ProductFactory
 
 
 fake = Faker()
@@ -37,6 +38,9 @@ class TestBase(TestCase):
             'email': 'fake@test.data1'
         }
 
+        self.product1 = ProductFactory.create()
+
+        self.factory = RequestFactory()
 
 class TestAPIBase(APITestCase):
     """
@@ -82,19 +86,3 @@ class TestAPIBase(APITestCase):
             'password': 'defaultpassword',
             'confirm_password': 'defaultpassword'
         }
-
-
-# class FormTestBase(LiveServerTestCase):
-#     """
-#     The base class that contains setups for testing forms
-#     """
-
-#     @classmethod
-#     def setUpClass(cls):
-#         super().setUpClass()
-#         cls.selenium = WebDriver()
-
-#     @classmethod
-#     def tearDownClass(cls):
-#         cls.selenium.quit()
-#         super().tearDownClass()
