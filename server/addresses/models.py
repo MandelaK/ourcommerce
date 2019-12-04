@@ -8,17 +8,13 @@ class Address(models.Model):
     Model for the Addresses
     """
 
-    ADDRESS_TYPES = (
-        ('billing', 'Billing'),
-        ('shipping', 'Shipping')
-    )
+    ADDRESS_TYPES = (("billing", "Billing"), ("shipping", "Shipping"))
 
-    billing_profile = models.ForeignKey(
-        BillingProfile, on_delete=models.CASCADE)
+    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE)
     address_type = models.CharField(max_length=20, choices=ADDRESS_TYPES)
     address_line_1 = models.CharField(max_length=120)
     address_line_2 = models.CharField(max_length=120, null=True, blank=True)
-    country = models.CharField(max_length=120, default='Kenya')
+    country = models.CharField(max_length=120, default="Kenya")
     city = models.CharField(max_length=120)
     state = models.CharField(max_length=120)
     postal_code = models.CharField(max_length=120)
@@ -32,9 +28,5 @@ class Address(models.Model):
         """
 
         return "{}\n{}\n{},\n{},\n{}".format(
-            self.address_line_1,
-            self.city,
-            self.state,
-            self.postal_code,
-            self.country
+            self.address_line_1, self.city, self.state, self.postal_code, self.country
         )

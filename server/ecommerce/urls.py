@@ -23,23 +23,27 @@ from .views import home_page, contact_page, about_page
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('auth/', include(('accounts.urls', 'accounts'), namespace='accounts')),
-    path('', home_page, name='home'),
-    path('about/', about_page, name='about'),
-    path('contact/', contact_page, name='contact'),
-    path('address/', include(('addresses.urls', 'addresses'), namespace='addresses'),
-         name='addresses'),
-    path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
-    path('products/', include(('products.urls', 'products'), namespace='products')),
-    path('search/', include(('search.urls', 'search'), namespace='search')),
-    path('api/v1/auth/', include(('api.accounts.urls',
-                                  'api-auth')))
+    path("admin/", admin.site.urls),
+    path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("", home_page, name="home"),
+    path("about/", about_page, name="about"),
+    path("contact/", contact_page, name="contact"),
+    path(
+        "address/",
+        include(("addresses.urls", "addresses"), namespace="addresses"),
+        name="addresses",
+    ),
+    path("cart/", include(("cart.urls", "cart"), namespace="cart")),
+    path("products/", include(("products.urls", "products"), namespace="products")),
+    path("search/", include(("search.urls", "search"), namespace="search")),
+    path("api/v1/auth/", include(("api.accounts.urls", "api-auth"))),
 ]
 
 # don't serve static files in production
 if settings.DEBUG:
-    urlpatterns = urlpatterns + static(settings.STATIC_URL,
-                                       document_root=settings.STATIC_ROOT)
-    urlpatterns = urlpatterns + static(settings.MEDIA_URL,
-                                       document_root=settings.MEDIA_ROOT)
+    urlpatterns = urlpatterns + static(
+        settings.STATIC_URL, document_root=settings.STATIC_ROOT
+    )
+    urlpatterns = urlpatterns + static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )

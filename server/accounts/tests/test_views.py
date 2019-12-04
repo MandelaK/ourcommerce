@@ -1,4 +1,5 @@
 from rest_framework import status
+
 # TODO: Is there a way to include middleware in my TestCase to avoid repetition?
 from django.contrib.sessions.middleware import SessionMiddleware
 
@@ -33,7 +34,7 @@ class LoginPageTest(TestAPIBase):
         # TODO: Make this functional test
 
         data = self.test_user1_login_data.copy()
-        data['password'] = 'wrongpassword'
+        data["password"] = "wrongpassword"
         request = self.factory.post(self.account_login_url, data)
         middleware = SessionMiddleware()
         middleware.process_request(request)
@@ -49,7 +50,7 @@ class LoginPageTest(TestAPIBase):
         # TODO: Test url user is redirected to
 
         data = self.test_user1_login_data.copy()
-        data['next'] = '/cart/'
+        data["next"] = "/cart/"
         request = self.factory.post(self.account_login_url, data)
         middleware = SessionMiddleware()
         middleware.process_request(request)
@@ -65,7 +66,7 @@ class LoginPageTest(TestAPIBase):
         # TODO: Make this functional test
 
         data = self.test_user1_login_data.copy()
-        data.pop('password')
+        data.pop("password")
         request = self.factory.post(self.account_login_url, data)
         middleware = SessionMiddleware()
         middleware.process_request(request)
@@ -85,7 +86,9 @@ class GuestRegisterPageTest(TestAPIBase):
         """
         # TODO: Test actual url redirected to
 
-        request = self.factory.post(self.guest_register_url, self.guest_email_account2_data)
+        request = self.factory.post(
+            self.guest_register_url, self.guest_email_account2_data
+        )
         middleware = SessionMiddleware()
         middleware.process_request(request)
 
@@ -93,7 +96,9 @@ class GuestRegisterPageTest(TestAPIBase):
 
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
-    def test_that_guest_registration_form_must_be_valid_before_guest_accounts_can_be_created(self):
+    def test_that_guest_registration_form_must_be_valid_before_guest_accounts_can_be_created(
+        self,
+    ):
         """
         The guest registration form must be validated before we can proceed to create
         guest email accounts
@@ -108,13 +113,15 @@ class GuestRegisterPageTest(TestAPIBase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_that_guest_users_are_redirected_to_next_url_after_succesful_registration(self):
+    def test_that_guest_users_are_redirected_to_next_url_after_succesful_registration(
+        self,
+    ):
         """
         Guest users should be able to register by supplying their email address. If they were to be
         redirected to a specific url after succesful registration, they should be redirected
         """
         data = self.guest_email_account2_data.copy()
-        data['next'] = '/checkout/'
+        data["next"] = "/checkout/"
         request = self.factory.post(self.guest_register_url, data)
         middleware = SessionMiddleware()
         middleware.process_request(request)
@@ -135,7 +142,9 @@ class RegisterPageTest(TestAPIBase):
         """
         Users should be able to register provided they enter valid information
         """
-        request = self.factory.post(self.account_register_url, self.test_user_registration_data)
+        request = self.factory.post(
+            self.account_register_url, self.test_user_registration_data
+        )
 
         middleware = SessionMiddleware()
         middleware.process_request(request)
@@ -151,7 +160,7 @@ class RegisterPageTest(TestAPIBase):
         # TODO: Make this functional test
 
         data = self.test_user_registration_data.copy()
-        data['confirm_password'] = 'LOL!'
+        data["confirm_password"] = "LOL!"
         request = self.factory.post(self.account_register_url, data)
 
         middleware = SessionMiddleware()

@@ -23,7 +23,7 @@ def cart_update(request):
     """
     View for updating the cart
     """
-    product_id = request.POST.get('product_id')
+    product_id = request.POST.get("product_id")
     if product_id is not None:
         product_obj = Product.objects.get(id=product_id)
         cart_obj, new_obj = Cart.objects.new_or_get(request)
@@ -31,7 +31,7 @@ def cart_update(request):
             cart_obj.products.remove(product_obj)
         else:
             cart_obj.products.add(product_obj)
-        request.session['cart_items'] = cart_obj.products.count()
+        request.session["cart_items"] = cart_obj.products.count()
     return redirect("cart:cart")
 
 
@@ -48,23 +48,19 @@ def checkout(request):
     address_form = AddressForm()
     billing_profile, created = BillingProfile.objects.new_or_get(request)
 
-    billing_address_id = request.session.get('billing_address_id', None)
-    shipping_address_id = request.session.get('shipping_address_id', None)
+    billing_address_id = request.session.get("billing_address_id", None)
+    shipping_address_id = request.session.get("shipping_address_id", None)
     address_qs = None
     if billing_profile is not None:
         if request.user.is_authenticated:
-            address_qs = Address.objects.filter(
-                billing_profile=billing_profile)
-        order_obj, order_created = Order.objects.new_or_get(
-            billing_profile, cart_obj)
+            address_qs = Address.objects.filter(billing_profile=billing_profile)
+        order_obj, order_created = Order.objects.new_or_get(billing_profile, cart_obj)
         if shipping_address_id:
-            order_obj.shipping_address = Address.objects.get(
-                pk=shipping_address_id)
+            order_obj.shipping_address = Address.objects.get(pk=shipping_address_id)
             order_obj.save()
-            del request.session['shipping_address_id']
+            del request.session["shipping_address_id"]
         if billing_address_id:
-            order_obj.billing_address = Address.objects.get(
-                pk=billing_address_id)
+            order_obj.billing_address = Address.objects.get(pk=billing_address_id)
             order_obj.save()
             del request.session["billing_address_id"]
     if request.method == "POST":
@@ -75,12 +71,12 @@ def checkout(request):
             del request.session["cart_id"]
             return redirect("cart:done")
     context = {
-        'object': order_obj,
-        'billing_profile': billing_profile,
-        'login_form': login_form,
-        'guest_form': guest_form,
-        'address_form': address_form,
-        'address_qs': address_qs
+        "object": order_obj,
+        "billing_profile": billing_profile,
+        "login_form": login_form,
+        "guest_form": guest_form,
+        "address_form": address_form,
+        "address_qs": address_qs,
     }
     return render(request, "cart/checkout.html", context=context)
 

@@ -17,10 +17,12 @@ class ProductQuerySet(models.query.QuerySet):
 
     def search(self, query):
         """Query set for searching through different fields"""
-        lookups = (Q(title__icontains=query) | Q(
-            description__icontains=query) | Q(price__icontains=query) | Q(
-                producttag__title__icontains=query
-        ))
+        lookups = (
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(price__icontains=query)
+            | Q(producttag__title__icontains=query)
+        )
         return self.filter(lookups).distinct()
 
 
@@ -51,14 +53,14 @@ class Product(models.Model):
     slug = models.SlugField(blank=True, unique=True)
     description = models.TextField()
     price = models.DecimalField(decimal_places=3, max_digits=13)
-    image = models.ImageField(upload_to='products/', null=True, blank=True)
+    image = models.ImageField(upload_to="products/", null=True, blank=True)
     featured = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
 
     objects = ProductManager()
 
     def get_absolute_url(self):
-        return reverse('products:product_detail', args=[self.slug])
+        return reverse("products:product_detail", args=[self.slug])
 
     def __str__(self):
         return self.title

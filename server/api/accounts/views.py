@@ -21,8 +21,6 @@ class RegisterUserAPIView(CreateAPIView):
         serializer = self.serializer_class(data=payload)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        response = {
-            'message': 'User successfully created.'
-        }
+        response = {"message": "User successfully created."}
 
         return Response(response, status=status.HTTP_201_CREATED)

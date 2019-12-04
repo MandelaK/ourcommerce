@@ -9,7 +9,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
     Define the Authentication Backend for REST API Endpoints
     """
 
-    auth_header_prefix = 'Bearer'.lower()
+    auth_header_prefix = "Bearer".lower()
 
     def authenticate(self, request):
         """
@@ -33,8 +33,8 @@ class JWTAuthentication(authentication.BaseAuthentication):
         if not len(auth_header) == 2:
             return None
 
-        prefix = auth_header[0].decode('utf-8')
-        token = auth_header[1].decode('utf-8')
+        prefix = auth_header[0].decode("utf-8")
+        token = auth_header[1].decode("utf-8")
 
         if prefix.lower() != self.auth_header_prefix:
             return None
@@ -52,14 +52,16 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed(
-                detail='Your session has expired. Please log in again.', code='invalid')
+                detail="Your session has expired. Please log in again.", code="invalid"
+            )
 
         try:
-            user = get_user_model().objects.get(pk=payload.get('id'))
+            user = get_user_model().objects.get(pk=payload.get("id"))
             if not user.is_active:
                 raise exceptions.AuthenticationFailed(
-                    'This user has been deactived.', code='invalid')
+                    "This user has been deactived.", code="invalid"
+                )
         except Exception as e:
-            raise exceptions.AuthenticationFailed(detail=e, code='invalid')
+            raise exceptions.AuthenticationFailed(detail=e, code="invalid")
 
         return (user, token)

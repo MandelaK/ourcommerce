@@ -11,6 +11,7 @@ class RegisterFormTestCase(TestBase):
     """
     Contains tests for the functionality of the register form
     """
+
     def test_that_emails_are_properly_cleaned_if_they_are_not_unique(self):
         """
         Users should be allowed to use only unique emails
@@ -18,11 +19,13 @@ class RegisterFormTestCase(TestBase):
 
         data = self.user_registration_data
         email = User.objects.first().email
-        data['email'] = email
+        data["email"] = email
 
         form = RegisterForm(data)
         self.assertFalse(form.is_valid())
-        self.assertEquals(form.errors, {'email': ['A user with this email exists already']})
+        self.assertEquals(
+            form.errors, {"email": ["A user with this email exists already"]}
+        )
 
     def test_that_passwords_must_match_in_registration_form(self):
         """
@@ -30,8 +33,8 @@ class RegisterFormTestCase(TestBase):
         """
 
         data = self.user_registration_data
-        data['confirm_password'] = 'thisissodefinitelywrong'
+        data["confirm_password"] = "thisissodefinitelywrong"
 
         form = RegisterForm(data)
         self.assertFalse(form.is_valid())
-        self.assertIn('Passwords must match!', form.errors.get('__all__'))
+        self.assertIn("Passwords must match!", form.errors.get("__all__"))

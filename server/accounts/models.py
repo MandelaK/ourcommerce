@@ -6,6 +6,7 @@ class GuestEmail(models.Model):
     """
     Define the fields for guest users
     """
+
     email = models.EmailField()
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -26,10 +27,10 @@ class UserManager(BaseUserManager):
         we return the first instance
         """
 
-        password = kwargs.get('password')
+        password = kwargs.get("password")
         if password:
-            kwargs.pop('password')
-        kwargs['email'] = self.normalize_email(kwargs['email'])
+            kwargs.pop("password")
+        kwargs["email"] = self.normalize_email(kwargs["email"])
         user, created = super().get_or_create(**kwargs)
         if created:
             user.set_password(password)
@@ -40,7 +41,12 @@ class UserManager(BaseUserManager):
     def create_user(self, email=None, password=None, **kwargs):
         if not email:
             raise TypeError("Users must have an email address.")
-        user = self.model(email=self.normalize_email(email), password=password, username=email, **kwargs)
+        user = self.model(
+            email=self.normalize_email(email),
+            password=password,
+            username=email,
+            **kwargs,
+        )
         user.set_password(password)
         user.save(using=self.db)
         return user
@@ -48,9 +54,10 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email=None, password=None, **kwargs):
         if not password:
             raise TypeError("Superusers must have a password.")
-        user = self.create_user(email=email, password=password, is_superuser=True, is_staff=True, **kwargs)
+        user = self.create_user(
+            email=email, password=password, is_superuser=True, is_staff=True, **kwargs
+        )
         return user
-
 
 
 class CustomUser(AbstractUser):
@@ -64,7 +71,7 @@ class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
     REQUIRED_FIELDS = []
 

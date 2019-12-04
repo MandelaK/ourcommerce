@@ -9,20 +9,29 @@ User = get_user_model()
 
 class LoginForm(forms.Form):
     """Define the login form"""
+
     email = forms.CharField(
-        label='Email', widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Enter your email..."}))
+        label="Email",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Enter your email..."}
+        ),
+    )
     password = forms.CharField(
-        label='Password', widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Enter your password..."})
+        label="Password",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Enter your password..."}
+        ),
     )
 
 
 class GuestForm(forms.Form):
     """Define the form for guest users"""
+
     email = forms.EmailField(
-        label='Email', widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "Enter your email..."})
+        label="Email",
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Enter your email..."}
+        ),
     )
 
 
@@ -31,35 +40,39 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email',)
+        fields = ("email",)
 
     email = forms.EmailField(
-        label='Email', widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "Enter your email..."})
+        label="Email",
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Enter your email..."}
+        ),
     )
 
     password = forms.CharField(
-        label='Password', widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Enter your password..."})
+        label="Password",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Enter your password..."}
+        ),
     )
     confirm_password = forms.CharField(
-        label='Confirm Password', widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Confirm your password..."})
+        label="Confirm Password",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Confirm your password..."}
+        ),
     )
 
     def clean_email(self):
         """Ensure usernames are unique"""
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get("email")
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError(
-                "A user with this email exists already"
-            )
+            raise forms.ValidationError("A user with this email exists already")
         return email
 
     def clean(self):
         data = self.cleaned_data
-        password = self.cleaned_data.get('password')
-        password2 = self.cleaned_data.get('confirm_password')
+        password = self.cleaned_data.get("password")
+        password2 = self.cleaned_data.get("confirm_password")
         if password != password2:
             raise forms.ValidationError("Passwords must match!")
         return data
@@ -69,7 +82,7 @@ class RegisterForm(forms.ModelForm):
         Ensure that users are save correctly to DB.
         """
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
+        user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
         return user

@@ -7,6 +7,7 @@ from ecommerce.utils import unique_slug_generator
 
 class ProductTag(models.Model):
     """Define the Tag Model"""
+
     title = models.CharField(max_length=50)
     slug = models.SlugField()
     timestamp = models.DateTimeField(auto_now_add=True)
