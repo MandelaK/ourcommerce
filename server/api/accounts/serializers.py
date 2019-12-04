@@ -1,5 +1,5 @@
 from rest_framework import serializers, exceptions
-from django.contrib.auth import get_user_model, password_validation
+from django.contrib.auth import get_user_model, password_validation, authenticate
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
@@ -14,14 +14,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
     """
 
     email = serializers.EmailField()
-    username = serializers.CharField()
     password = serializers.CharField()
 
     confirm_password = serializers.CharField()
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'username', 'password', 'confirm_password']
+        fields = ['email', 'password', 'confirm_password']
 
     def validate(self, data):
         """
@@ -49,17 +48,16 @@ class RegistrationSerializer(serializers.ModelSerializer):
         Method that actually creates users
         """
         validated_data.pop('confirm_password')
-        email, password, username = validated_data.get(
-            'email'), validated_data.get('password'), validated_data.get('username')
+        email, password = validated_data.get(
+            'email'), validated_data.get('password'),
         try:
             user, created = User.objects.get_or_create(
-                email=email, username=username, password=password)
+                email=email, password=password)
 
             if not created:
                 raise exceptions.ValidationError({
                     "user": ("A user is already registered with those credentials. "
-                             "You can either log in or try registering with different "
-                             "cretentials."
+                             "You can either log in or try registering with different cretentials."
                              )
                 })
             return user

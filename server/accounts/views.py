@@ -74,11 +74,7 @@ def register_page(request):
         "form": form
     }
     if form.is_valid():
-        username = form.cleaned_data.get('username')
-        email = form.cleaned_data.get('email')
-        password = form.cleaned_data.get('password')
-        User.objects.get_or_create(
-            username=username, email=email, password=password)
+        form.save()
         context['form'] = RegisterForm()
         return redirect(reverse('accounts:login'))
 

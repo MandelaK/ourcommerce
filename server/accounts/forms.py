@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
+from .models import CustomUser
+
 
 User = get_user_model()
 
@@ -24,16 +26,18 @@ class GuestForm(forms.Form):
     )
 
 
-class RegisterForm(forms.Form):
+class RegisterForm(forms.ModelForm):
     """Define the registration form"""
+
+    class Meta:
+        model = CustomUser
+        fields = ('email',)
 
     email = forms.EmailField(
         label='Email', widget=forms.EmailInput(
             attrs={"class": "form-control", "placeholder": "Enter your email..."})
     )
-    username = forms.CharField(
-        label='Username', widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Enter your username..."}))
+
     password = forms.CharField(
         label='Password', widget=forms.PasswordInput(
             attrs={"class": "form-control", "placeholder": "Enter your password..."})
@@ -42,15 +46,6 @@ class RegisterForm(forms.Form):
         label='Confirm Password', widget=forms.PasswordInput(
             attrs={"class": "form-control", "placeholder": "Confirm your password..."})
     )
-
-    def clean_username(self):
-        """Ensure usernames are unique"""
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError(
-                "A user with this username exists already"
-            )
-        return username
 
     def clean_email(self):
         """Ensure usernames are unique"""
@@ -68,3 +63,13 @@ class RegisterForm(forms.Form):
         if password != password2:
             raise forms.ValidationError("Passwords must match!")
         return data
+
+    def save(self, commit=True):
+        """
+        Ensure that users are save correctly to DB.
+        """
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user
