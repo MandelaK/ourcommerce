@@ -9,25 +9,84 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('billings', '0001_initial'),
-        ('cart', '0001_initial'),
-        ('addresses', '__first__'),
+        ("billings", "0001_initial"),
+        ("cart", "0001_initial"),
+        ("addresses", "__first__"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_id', models.CharField(blank=True, max_length=120, unique=True)),
-                ('status', models.CharField(choices=[('created', 'Created'), ('paid', 'Paid'), ('shipped', 'Shipped'), ('refunded', 'Refunded')], default='created', max_length=50)),
-                ('shipping_total', models.DecimalField(decimal_places=2, default=100.0, max_digits=100)),
-                ('total', models.DecimalField(decimal_places=2, default=0.0, max_digits=100)),
-                ('active', models.BooleanField(default=True)),
-                ('billing_address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='billing_address', to='addresses.Address')),
-                ('billing_profile', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='billings.BillingProfile')),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cart.Cart')),
-                ('shipping_address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='shipping_address', to='addresses.Address')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order_id", models.CharField(blank=True, max_length=120, unique=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("created", "Created"),
+                            ("paid", "Paid"),
+                            ("shipped", "Shipped"),
+                            ("refunded", "Refunded"),
+                        ],
+                        default="created",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "shipping_total",
+                    models.DecimalField(
+                        decimal_places=2, default=100.0, max_digits=100
+                    ),
+                ),
+                (
+                    "total",
+                    models.DecimalField(decimal_places=2, default=0.0, max_digits=100),
+                ),
+                ("active", models.BooleanField(default=True)),
+                (
+                    "billing_address",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="billing_address",
+                        to="addresses.Address",
+                    ),
+                ),
+                (
+                    "billing_profile",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="billings.BillingProfile",
+                    ),
+                ),
+                (
+                    "cart",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="cart.Cart"
+                    ),
+                ),
+                (
+                    "shipping_address",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="shipping_address",
+                        to="addresses.Address",
+                    ),
+                ),
             ],
         ),
     ]

@@ -13,7 +13,7 @@ class TestGuestEmailModel(TestBase):
         for all initialized GuestEmail models
         """
 
-        self.assertEqual(str(self.guest_email_account1), 'guest1@email.com')
+        self.assertEqual(str(self.guest_email_account1), "guest1@email.com")
 
 
 class TestUserManager(TestBase):
@@ -39,7 +39,9 @@ class TestUserManager(TestBase):
         """
 
         user, created = CustomUser.objects.get_or_create(
-            email='nonexistent@user.test', username='nonexistent', password='defaultpassword'
+            email="nonexistent@user.test",
+            username="nonexistent",
+            password="defaultpassword",
         )
 
         self.assertTrue(created)
@@ -55,17 +57,19 @@ class TestUserManager(TestBase):
         with self.assertRaises(TypeError) as exc:
             CustomUser.objects.create_user(password="defaultpassword")
 
-        self.assertEqual(str(exc.exception), 'Users must have an email address.')
-    
+        self.assertEqual(str(exc.exception), "Users must have an email address.")
+
     def test_that_users_are_created_if_all_necessary_arguments_are_provided(self):
-        user = CustomUser.objects.create_user(email="test@mail.com", password="password")
+        user = CustomUser.objects.create_user(
+            email="test@mail.com", password="password"
+        )
 
         self.assertIsInstance(user, CustomUser)
         self.assertEqual(user.email, "test@mail.com")
 
     def test_that_superusers_cannot_be_created_without_passwords(self):
         with self.assertRaises(TypeError) as exc:
-           CustomUser.objects.create_superuser(email="test@superuser.com")
+            CustomUser.objects.create_superuser(email="test@superuser.com")
 
         self.assertEqual(str(exc.exception), "Superusers must have a password.")
 
@@ -74,19 +78,26 @@ class TestUserManager(TestBase):
         We should be able to create superusers provided that we pass all required fields.
         """
 
-        superuser = CustomUser.objects.create_superuser(email="superuser@mail.com", password="superuserpassword")
+        superuser = CustomUser.objects.create_superuser(
+            email="superuser@mail.com", password="superuserpassword"
+        )
 
         self.assertTrue(superuser.is_superuser)
         self.assertTrue(superuser.is_staff)
         self.assertIsInstance(superuser, CustomUser)
 
     def test_that_users_get_full_names_if_first_and_last_name_present(self):
-        user = CustomUser.objects.create_user(email="first@user.test", password="password", first_name="first", last_name="last")
+        user = CustomUser.objects.create_user(
+            email="first@user.test",
+            password="password",
+            first_name="first",
+            last_name="last",
+        )
 
         self.assertEqual(user.get_full_name(), "First Last")
 
     def test_that_users_get_full_names_if_no_first_and_last_names(self):
-        self.assertEqual(self.test_user1.get_full_name(), 'test@user.one')
+        self.assertEqual(self.test_user1.get_full_name(), "test@user.one")
 
     def test_that_users_can_get_short_names(self):
-        self.assertEqual(self.test_user1.get_short_name(), 'test@user.one')
+        self.assertEqual(self.test_user1.get_short_name(), "test@user.one")

@@ -15,8 +15,8 @@ def unique_slug_generator(instance, new_slug=None):
     extension = 1
 
     CLASS = instance.__class__
-    while CLASS._default_manager.filter(**{'slug': unique_slug}).exists():
-        unique_slug = f'{unique_slug}-{extension}'
+    while CLASS._default_manager.filter(**{"slug": unique_slug}).exists():
+        unique_slug = f"{unique_slug}-{extension}"
         extension += 1
 
     return unique_slug
@@ -24,7 +24,7 @@ def unique_slug_generator(instance, new_slug=None):
 
 def random_string_generator(size=15, chars=string.ascii_uppercase + string.digits):
     """Generate a random string with a length of `size`"""
-    return ''.join(random.choice(chars) for _ in range(size))
+    return "".join(random.choice(chars) for _ in range(size))
 
 
 def unique_order_id_generator(instance):
@@ -33,7 +33,7 @@ def unique_order_id_generator(instance):
     new_order_id = random_string_generator()
 
     CLASS = instance.__class__
-    while CLASS._default_manager.filter(**{'order_id': new_order_id}).exists():
+    while CLASS._default_manager.filter(**{"order_id": new_order_id}).exists():
         return unique_order_id_generator(instance)
 
     return new_order_id

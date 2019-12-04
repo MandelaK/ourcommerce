@@ -20,7 +20,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'password', 'confirm_password']
+        fields = ["email", "password", "confirm_password"]
 
     def validate(self, data):
         """
@@ -28,44 +28,53 @@ class RegistrationSerializer(serializers.ModelSerializer):
         """
 
         try:
-            password_validation.validate_password(data.get('password'))
-            def do_passwords_match(
-                password1, password2): return password1 == password2
+            password_validation.validate_password(data.get("password"))
+
+            def do_passwords_match(password1, password2):
+                return password1 == password2
+
             match = do_passwords_match(
-                data.get('password'), data.get('confirm_password'))
+                data.get("password"), data.get("confirm_password")
+            )
         except ValidationError as e:
-            raise exceptions.ValidationError({
-                "password": e.messages
-            })
+            raise exceptions.ValidationError({"password": e.messages})
 
         if not match:
-            raise exceptions.ValidationError({
-                "confirm_password": "Your passwords do not match"})
+            raise exceptions.ValidationError(
+                {"confirm_password": "Your passwords do not match"}
+            )
         return data
 
     def create(self, validated_data):
         """
         Method that actually creates users
         """
-        validated_data.pop('confirm_password')
-        email, password = validated_data.get(
-            'email'), validated_data.get('password'),
+        validated_data.pop("confirm_password")
+        email, password = (
+            validated_data.get("email"),
+            validated_data.get("password"),
+        )
         try:
-            user, created = User.objects.get_or_create(
-                email=email, password=password)
+            user, created = User.objects.get_or_create(email=email, password=password)
 
             if not created:
-                raise exceptions.ValidationError({
-                    "user": ("A user is already registered with those credentials. "
-                             "You can either log in or try registering with different cretentials."
-                             )
-                })
+                raise exceptions.ValidationError(
+                    {
+                        "user": (
+                            "A user is already registered with those credentials. "
+                            "You can either log in or try registering with different cretentials."
+                        )
+                    }
+                )
             return user
 
         except IntegrityError:
-            raise exceptions.ValidationError({
-                "user": ("A user is already registered with those credentials. "
-                         "You can either log in or try registering with different "
-                         "cretentials."
-                         )
-            })
+            raise exceptions.ValidationError(
+                {
+                    "user": (
+                        "A user is already registered with those credentials. "
+                        "You can either log in or try registering with different "
+                        "cretentials."
+                    )
+                }
+            )

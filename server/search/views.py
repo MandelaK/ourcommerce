@@ -11,11 +11,12 @@ class SearchProductView(ListView):
     """
     Define the methods for handling the search functionality
     """
-    template_name = 'search/view.html'
+
+    template_name = "search/view.html"
 
     def get_queryset(self, *args, **kwargs):
         request = self.request
-        query = request.GET.get('q')
+        query = request.GET.get("q")
         if query:
             return Product.objects.search(query)
         return Product.objects.featured()

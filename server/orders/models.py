@@ -24,7 +24,7 @@ class OrderManager(models.Manager):
             cart=cart_obj,
             billing_profile=billing_profile,
             active=True,
-            status="created"  # exclude paid orders
+            status="created",  # exclude paid orders
         )
         if qs.count() == 1:
             created = False
@@ -33,7 +33,8 @@ class OrderManager(models.Manager):
             # if there are any old active orders for this billing profile,
             # we make them inactive and create a new order
             obj = self.model.objects.create(
-                billing_profile=billing_profile, cart=cart_obj)
+                billing_profile=billing_profile, cart=cart_obj
+            )
             created = True
 
         return obj, created
@@ -45,27 +46,38 @@ class Order(models.Model):
     """
 
     ORDER_STATUS_CHOICES = (
-        ('created', 'Created'),
-        ('paid', 'Paid'),
-        ('shipped', 'Shipped'),
-        ('refunded', 'Refunded')
+        ("created", "Created"),
+        ("paid", "Paid"),
+        ("shipped", "Shipped"),
+        ("refunded", "Refunded"),
     )
 
     order_id = models.CharField(max_length=120, blank=True, unique=True)
     billing_profile = models.ForeignKey(
-        BillingProfile, on_delete=models.CASCADE, null=True, blank=True)
+        BillingProfile, on_delete=models.CASCADE, null=True, blank=True
+    )
     shipping_address = models.ForeignKey(
-        Address, on_delete=models.CASCADE, null=True, blank=True,
-        related_name='shipping_address')
+        Address,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="shipping_address",
+    )
     billing_address = models.ForeignKey(
-        Address, on_delete=models.CASCADE, null=True, blank=True,
-        related_name="billing_address")
+        Address,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="billing_address",
+    )
     # TODO check whether cart should be a OneToOne field instead
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     status = models.CharField(
-        max_length=50, default='created', choices=ORDER_STATUS_CHOICES)
+        max_length=50, default="created", choices=ORDER_STATUS_CHOICES
+    )
     shipping_total = models.DecimalField(
-        default=SHIPPING_DEFAULT, max_digits=100, decimal_places=2)
+        default=SHIPPING_DEFAULT, max_digits=100, decimal_places=2
+    )
     total = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
     active = models.BooleanField(default=True)
 
@@ -81,7 +93,7 @@ class Order(models.Model):
         cart_total = self.cart.total
         shipping_total = self.shipping_total
         total = math.fsum([cart_total, shipping_total])
-        formated_total = format(total, '.2f')
+        formated_total = format(total, ".2f")
         self.total = formated_total
         self.save()
         return self.total
@@ -90,7 +102,12 @@ class Order(models.Model):
         """
         Check that the order is ready to be finished
         """
-        if self.billing_profile and self.billing_address and self.shipping_address and self.total > 0:
+        if (
+            self.billing_profile
+            and self.billing_address
+            and self.shipping_address
+            and self.total > 0
+        ):
             return True
         return False
 
@@ -114,7 +131,8 @@ def pre_save_order_receiver(sender, instance, *args, **kwargs):
     # if old orders exist for this cart, we deactivate them.
     # TODO why are we excluding the billing profile?
     old_orders = Order.objects.filter(cart=instance.cart).exclude(
-        billing_profile=instance.billing_profile)
+        billing_profile=instance.billing_profile
+    )
     if old_orders.exists():
         old_orders.update(active=False)
 

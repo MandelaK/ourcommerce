@@ -9,6 +9,7 @@ from products.models import Product
 
 fake = Faker()
 
+
 class ProductFactory(factory.DjangoModelFactory):
     """
     Factory class to create fake products.
@@ -16,7 +17,7 @@ class ProductFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Product
-    
+
     title = fake.word()
     slug = factory.LazyAttribute(lambda _: fake.word())
     description = fake.text()

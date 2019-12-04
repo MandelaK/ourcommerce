@@ -4,6 +4,7 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from tests.test_base import TestBase
 from products.views import ProductDetailView
 
+
 class ProductDetailViewTest(TestBase):
     """
     Test the product detail view.
@@ -11,7 +12,9 @@ class ProductDetailViewTest(TestBase):
 
     def test_that_the_cart_is_passed_to_the_session_key(self):
 
-        request = self.factory.get(reverse("products:product_detail", args=[self.product1.slug]))
+        request = self.factory.get(
+            reverse("products:product_detail", args=[self.product1.slug])
+        )
 
         middleware = SessionMiddleware()
         middleware.process_request(request)

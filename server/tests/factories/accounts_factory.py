@@ -24,8 +24,7 @@ class UserFactory(factory.DjangoModelFactory):
     username = factory.LazyAttribute(lambda _: fake.user_name())
     email = factory.LazyAttribute(lambda _: fake.email())
     # users are created with the default password of `defaultpassword`
-    password = factory.PostGenerationMethodCall('set_password',
-                                                'defaultpassword')
+    password = factory.PostGenerationMethodCall("set_password", "defaultpassword")
 
 
 class GuestEmailFactory(factory.DjangoModelFactory):
